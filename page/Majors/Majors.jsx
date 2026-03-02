@@ -1,6 +1,6 @@
 import React from 'react';
 import DynamicTable from '../../components/dynamicTable'
-import { Clock, CheckCircle, ShieldAlert, ExternalLink, MoreVertical, LayoutDashboard, Download, Search } from 'lucide-react';
+import { Clock, CheckCircle, ShieldAlert, ExternalLink, MoreVertical, LayoutDashboard, Download, Search, Plus } from 'lucide-react';
 
 
 
@@ -39,7 +39,8 @@ const Majors = () => {
         <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-white">
           <h3 className="text-lg font-bold text-blue-900 uppercase tracking-tight">Thông tin về các khoa/ ngành</h3>
           <div className="flex items-center gap-3 w-full sm:w-auto">
-      {/* Ô Tìm kiếm mới thêm vào */}
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+          {/* 1. Ô Tìm kiếm */}
           <div className="relative group flex-1 sm:flex-none">
             <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 group-focus-within:text-blue-600 transition-colors">
               <Search size={16} strokeWidth={2.5} />
@@ -51,6 +52,16 @@ const Majors = () => {
             />
           </div>
 
+          {/* 2. Nút Thêm thông báo */}
+          <button 
+            onClick={() => setIsModalOpen(true)} // Mở modal ở đây
+            className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold py-2 px-4 rounded-xl transition-all shadow-md active:scale-95 shrink-0"
+            >
+            <Plus size={18} strokeWidth={3} />
+            <span className="hidden sm:inline">Thêm ngành/ khóa hoc</span>
+            </button>
+        </div>
+
           
     </div>
         </div>
@@ -60,6 +71,12 @@ const Majors = () => {
         data={recentActivities} 
         // onRowClickPath={(row) => `/faculty/${row.holderName}`}
         onRowClickPath={(row) => `/faculty`} 
+        onArchive={(row) => {
+          console.log("Archive:", row.id);
+        }}
+        onUnarchive={(row) => {
+          console.log("Unarchive:", row.id);
+        }}
         />
       </div>
   );

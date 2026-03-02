@@ -37,7 +37,13 @@ const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi }) =
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <form
+  onSubmit={(e) => {
+    e.preventDefault();   // CHẶN RELOAD TRANG
+    handleSubmit(e);     // Gọi lại hàm submit của bạn
+  }}
+  className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+>
         {/* CỘT TRÁI & GIỮA: RENDER CÁC NHÓM TRƯỜNG DỮ LIỆU */}
         <div className="lg:col-span-2 space-y-6">
           {fields.map((group, idx) => (
@@ -91,14 +97,7 @@ const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi }) =
             <h3 className="text-blue-900 font-bold uppercase tracking-widest text-xs mb-6 flex items-center gap-2">
               <Calendar size={16} /> Thiết lập cấp phát
             </h3>
-            <div className="space-y-5">
-               <label className="text-[11px] font-bold text-slate-400 uppercase ml-1">Ngày cấp hệ thống</label>
-               <input type="date" name="issueDate" value={formData.issueDate} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-4 text-sm outline-none focus:border-blue-400 transition-all" />
-               
-               <label className="text-[11px] font-bold text-slate-400 uppercase ml-1">Phạm vi hiệu lực</label>
-               <input type="text" name="areaValid" value={formData.areaValid} onChange={handleChange} className="w-full bg-slate-50 border border-slate-200 rounded-xl py-2.5 px-4 text-sm outline-none focus:border-blue-400 transition-all" />
-            </div>
-
+            
             <button type="submit" disabled={isSubmitting} className={`w-full mt-8 flex items-center justify-center gap-2 py-4 rounded-xl font-bold text-sm transition-all shadow-lg ${isSubmitting ? "bg-slate-100 text-slate-400" : "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200"}`}>
               {isSubmitting ? <div className="w-5 h-5 border-2 border-t-transparent rounded-full animate-spin"></div> : <><Send size={18} /> Cấp & Ghi Blockchain</>}
             </button>

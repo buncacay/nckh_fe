@@ -1,8 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-
+import UserManager from '../page/Settings/UserManager';
 import Layout from '../components/layout/layout';
-
+import Approval from '../page/Dashboard/Approval';
 import IssueDiploma from '../page/IssueDiploma/IssueDiploma';
 import IssueCopy from '../page/Copy/Copy';
 import Dashboard from '../page/Dashboard/dashboard'
@@ -14,8 +14,10 @@ import Faculty from '../page/Majors/Faculty';
 import Student from '../page/Majors/Student';
 import SendNoti from '../page/Settings/SendNotification';
 import AddNoti from '../page/Settings/AddNoti';
+import DiplomaSafeFinal from '../page/IssueDiploma/demo';
 
 
+import Login from '../page/Login/login';
 
 const NotFound = () => (
   <div className="p-10 text-center min-h-screen flex flex-col items-center justify-center bg-gray-50">
@@ -34,24 +36,22 @@ function App() {
         {/* Các route cụ thể đặt TRƯỚC */}
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/issue" element={<Layout><IssueDiploma /></Layout>} />
-       
-        <Route path="/copy" element={<Layout><IssueCopy/></Layout>} />
+         <Route path="/copy" element={<Layout><IssueCopy/></Layout>} />
+        <Route path="/approval" element={<Layout><Approval/></Layout>} />
         <Route path="/revoke" element={<Layout><IssueAmend/></Layout>} />
         <Route path="/process" element={<Layout><HandleExcel /></Layout>} />
-        <Route path="/check" element = {<Layout><Guest></Guest></Layout>} />
+        <Route path="/guest" element = {<Guest></Guest>} />
         <Route path="/majors" element = {<Layout><Majors/></Layout>} />
         <Route path="/faculty" element = {<Layout><Faculty/></Layout>} />
         <Route path="/sendnoti" element = {<Layout><SendNoti/></Layout>} />
         <Route path="/student" element = {<Layout><Student/></Layout>} />
         <Route path="/addnoti" element = {<Layout><AddNoti/></Layout>} />
-        {/* Các trang placeholder */}
-        <Route path="/verify" element={<Layout><NotFound /></Layout>} />
-        <Route path="/revoke" element={<Layout><NotFound /></Layout>} />
-        <Route path="/explorer" element={<Layout><NotFound /></Layout>} />
-        <Route path="/settings" element={<Layout><NotFound /></Layout>} />
-
+        <Route path="/manager" element = {<Layout><UserManager/></Layout>} />
+        <Route path="/demo" element = {<DiplomaSafeFinal/>} />
+        
+        <Route path="/login" element={<Login />} />
         {/* Trang chủ và route mặc định - đặt SAU các route cụ thể */}
-         <Route path="/" element = {<Layout><Guest></Guest></Layout>} />
+         <Route path="/" element = {<Guest></Guest>} />
 
         {/* 404 catch-all - đặt CUỐI CÙNG */}
         <Route path="*" element={<NotFound />} />

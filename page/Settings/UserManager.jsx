@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 
 
-const Faculty = () => {
+const UserManager = () => {
 
   const [page, setPage] = useState(1);
   const [totalPages] = useState(5);
@@ -303,4 +303,4 @@ const Faculty = () => {
 };
 
 
-export default Faculty;
+export default UserManager;

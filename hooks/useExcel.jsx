@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 
 export const useExcel = (initialState, submitApiFn) => {
   const [formData, setFormData] = useState(initialState);
-  const [dataList, setDataList] = useState([]); // Dùng cho luồng Excel (nhiều bản ghi)
+  const [dataList, setDataList] = useState([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e) => {
@@ -11,16 +10,16 @@ export const useExcel = (initialState, submitApiFn) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  
   const handleSetDataList = (list) => {
     setDataList(list);
   };
 
-  const handleSubmit = async (dataToSubmit) => {
+  // ✅ KHÔNG nhận event nữa
+  const handleSubmit = async () => {
     setIsSubmitting(true);
     try {
-    
-      const result = await submitApiFn(dataToSubmit);
+      // luôn gửi formData
+      const result = await submitApiFn(formData);
       return { success: true, result };
     } catch (error) {
       return { success: false, error };

@@ -41,6 +41,7 @@ const menuItems = [
     items: [
       // { to: '/users', icon: Users, label: 'Quản lý nhân sự' },
       { to: '/sendnoti', icon: Settings, label: 'Quản lý thông báo' },
+      { to: '/manager', icon: Settings, label: 'Quản lý tài khoản' }
     ]
   },
 ];
@@ -60,16 +61,7 @@ const Sidebar = ({ isLoggedIn, setIsLoggedIn }) => {
 
       {/* 2. Search Section */}
       <div className="px-4 mb-4">
-        <div className="relative group">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400 group-focus-within:text-blue-500">
-            <Search size={16} />
-          </span>
-          <input
-            type="text"
-            placeholder="Tìm kiếm..."
-            className="w-full bg-gray-50 border border-gray-200 text-xs rounded-xl py-2 pl-9 pr-3 outline-none focus:bg-white focus:border-blue-400 focus:ring-4 focus:ring-blue-50 transition-all"
-          />
-        </div>
+        
       </div>
 
       {/* 3. Menu Navigation (Render lồng nhau) */}
