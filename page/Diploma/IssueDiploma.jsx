@@ -48,7 +48,7 @@ const IssueDiploma = () => {
       groupTitle: "Thông tin tốt nghiệp",
       icon: <BookOpen size={16} />,
       items: [
-        { name: "major", label: "Ngành đào tạo *", placeholder: "Công nghệ thông tin" },
+        { name: "major", label: "Ngành đào tạo *",type: "select",placeholder: "-- Chọn ngành --" },
         { name: "graduationYear", label: "Năm tốt nghiệp *", type: "number" },
         { name: "graduationRank", label: "Xếp loại", type: "select", options: ["Xuất sắc", "Giỏi", "Khá", "Trung bình"] },
         { name: "serialNumber", label: "Số hiệu văn bằng *", placeholder: "Số hiệu trên bằng" },
@@ -114,7 +114,6 @@ const IssueDiploma = () => {
 
       arweaveId: formData.arweaveId || "",
 
-      // vẫn giữ các field hệ thống nếu contract cần
       issueTimestamp: Math.floor(Date.now() / 1000),
       isValid: true,
       amendmentCount: 0,
@@ -136,7 +135,6 @@ const IssueDiploma = () => {
 
   return (
     <div>
-      {/* Hiển thị trạng thái ví để người dùng yên tâm */}
       {account && (
         <div className="text-right p-2 text-sm text-gray-500">
           Ví hiện tại: <span className="font-mono text-blue-600">{account.substring(0,6)}...{account.slice(-4)}</span>

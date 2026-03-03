@@ -1,71 +1,105 @@
-import { User, BookOpen, FileCheck, ClipboardList } from "lucide-react";
-import React from 'react';
+import { User, BookOpen, FileCheck } from "lucide-react";
+import React from "react";
 import IssueTemplate from "../../components/issueTemplate";
+import * as copy from "../../services/copyServices";
 
 const IssueCopy = () => {
-  // 1. Cập nhật state ban đầu theo các cột trong bảng phụ lục 5
+
+  // ================= INITIAL STATE =================
   const initialState = {
-    signerName: "",        // Người ký cấp bản sao
-    copyIssueDate: new Date().toISOString().split("T")[0], // Ngày tháng cấp bản sao
-    holderName: "",        // Họ và tên người được cấp bản sao
-    birthDate: "",         // Ngày tháng năm sinh
-    major: "",             // Ngành đào tạo theo sổ gốc
-    graduationYear: "",    // Năm tốt nghiệp theo sổ gốc
-    diplomaSerial: "",     // Số hiệu văn bằng theo sổ gốc
-    bookReferenceNumber: "", // Số vào sổ gốc cấp văn bằng
-    copyQuantity: 1,       // Số lượng bản sao
-    recipientName: "",     // Người nhận bản sao
-    notes: "",             // Ghi chú
-    issueDate: new Date().toISOString().split("T")[0], 
-    areaValid: "Toàn quốc"
+    // Thông tin cấp bản sao
+    SignerName: "",
+    CopyIssueDate: new Date().toISOString().split("T")[0],
+    CopyQuantity: 1,
+    ReceiverName: "",
+
+    // Thông tin cá nhân
+    HolderName: "",
+    BirthDate: "",
+    CitizenId: "",
+
+    // Dữ liệu sổ gốc
+    DiplomaId: "",
+    major: "",              // ✔ đồng bộ với fieldsConfig
+    GraduationYear: "",
+    SerialNumber: "",
+    Notes: ""
   };
 
-  // 2. Cấu hình các nhóm trường dữ liệu (Fields)
+  // ================= FORM CONFIG =================
   const fieldsConfig = [
     {
       groupTitle: "Thông tin cấp bản sao",
       icon: <FileCheck size={16} />,
       items: [
-        { name: "signerName", label: "Người ký cấp bản sao *", placeholder: "Tên người ký" },
-        { name: "copyIssueDate", label: "Ngày tháng cấp bản sao *", type: "date" },
-        { name: "copyQuantity", label: "Số lượng bản sao *", type: "number", placeholder: "Ví dụ: 1" },
-        { name: "recipientName", label: "Người nhận bản sao", placeholder: "Tên người đến nhận" },
+        { name: "SignerName", label: "Người ký cấp bản sao *", placeholder: "Tên người ký" },
+        { name: "CopyIssueDate", label: "Ngày cấp bản sao *", type: "date" },
+        { name: "CopyQuantity", label: "Số lượng bản sao *", type: "number" },
+        { name: "ReceiverName", label: "Người nhận bản sao *", placeholder: "Tên người nhận" }
       ]
     },
     {
-      groupTitle: "Thông tin cá nhân người được cấp",
+      groupTitle: "Thông tin người được cấp",
       icon: <User size={16} />,
       items: [
-        { name: "holderName", label: "Họ và tên người được cấp *", placeholder: "Nguyễn Văn A" },
-        { name: "birthDate", label: "Ngày tháng năm sinh *", type: "date" },
+        { name: "HolderName", label: "Họ và tên *", placeholder: "Nguyễn Văn A" },
+        { name: "BirthDate", label: "Ngày sinh *", type: "date" },
+        { name: "CitizenId", label: "CCCD/CMND *", placeholder: "Nhập số định danh" }
       ]
     },
     {
-      groupTitle: "Dữ liệu trích xuất từ sổ gốc",
+      groupTitle: "Dữ liệu từ sổ gốc",
       icon: <BookOpen size={16} />,
       items: [
-        { name: "major", label: "Ngành đào tạo (Sổ gốc) *", placeholder: "Ví dụ: Kiến trúc" },
-        { name: "graduationYear", label: "Năm tốt nghiệp *", placeholder: "Ví dụ: 2020" },
-        { name: "diplomaSerial", label: "Số hiệu văn bằng *", placeholder: "Số hiệu ghi trên bằng gốc" },
-        { name: "bookReferenceNumber", label: "Số vào sổ gốc cấp bằng *", placeholder: "Số thứ tự trong sổ gốc" },
+        { name: "DiplomaId", label: "ID Văn bằng *", placeholder: "Nhập ID văn bằng" },
+        { name: "major", label: "Ngành đào tạo *", type: "text", placeholder: "Nhập ngành đào tạo" },
+        { name: "GraduationYear", label: "Năm tốt nghiệp *", type: "number", placeholder: "Ví dụ: 2020" },
+        { name: "SerialNumber", label: "Số hiệu văn bằng *", placeholder: "Số hiệu trên bằng gốc" },
+        { name: "Notes", label: "Ghi chú *", placeholder: "Ghi chú thêm nếu có" }
       ]
     }
   ];
 
+  // ================= SUBMIT =================
   const handleCopySubmit = async (data) => {
-    // Gọi API của Hệ thống Cấp bản sao (Sổ gốc)
-    console.log("Đang ghi vào sổ gốc điện tử & Blockchain:", data);
-    return new Promise(res => setTimeout(res, 2000));
+    try {
+      console.log("DATA TRƯỚC KHI MAP:", data);
+
+      const payload = {
+        receiverName: data.ReceiverName,
+        count: Number(data.CopyQuantity),
+        notes: data.Notes,
+        singerName: data.SignerName,   // ✔ đúng theo API
+        issueAt: new Date(data.CopyIssueDate).toISOString(), // ✔ ISO format
+        serialNumber: data.SerialNumber,
+        holderName: data.HolderName,
+        citizenId: data.CitizenId,
+        birthDate: data.BirthDate,
+        major: data.major,
+        graduationYear: Number(data.GraduationYear),
+        diplomaId: data.DiplomaId
+      };
+
+      console.log("PAYLOAD GỬI LÊN API:", payload);
+
+      const res = await copy.issueCopy(payload);
+      return res;
+
+    } catch (error) {
+      console.error("Submit error:", error);
+      throw error;
+    }
   };
 
+  // ================= RENDER =================
   return (
-    <IssueTemplate 
+    <IssueTemplate
       title="Sổ cấp bản sao từ sổ gốc"
       subTitle="Trích lục dữ liệu văn bằng và xác thực bản sao lên Blockchain"
       initialState={initialState}
       fields={fieldsConfig}
       onSubmitApi={handleCopySubmit}
-      processPath="/process-copy" // Link dẫn đến trang upload Excel cho bản sao
+      processPath="/process-copy"
     />
   );
 };

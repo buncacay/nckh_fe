@@ -20,9 +20,12 @@ export default function LoginPage() {
       };
 
       const kq = await auth.login(loginDto);
-
-      if (kq) {
+      console.log(kq);
+      if (kq.data.sucess) {
         navigate("/dashboard");
+      }
+      else {
+        alert("Kiểm tra lại mật khẩu và tên đăng nhập");
       }
 
     } catch (err) {

@@ -3,18 +3,18 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import UserManager from '../page/Settings/UserManager';
 import Layout from '../components/layout/layout';
 import Approval from '../page/Dashboard/Approval';
-import IssueDiploma from '../page/IssueDiploma/IssueDiploma';
+import IssueDiploma from '../page/Diploma/IssueDiploma';
 import IssueCopy from '../page/Copy/Copy';
 import Dashboard from '../page/Dashboard/dashboard'
 import IssueAmend from '../page/Revoke/Revoke'; 
 import Guest from '../page/Guest/guest';
-import HandleExcel from '../page/IssueDiploma/HandleExcel';
+import HandleExcel from '../page/Diploma/HandleExcel';
 import Majors from '../page/Majors/Majors';
 import Faculty from '../page/Majors/Faculty';
 import Student from '../page/Majors/Student';
 import SendNoti from '../page/Settings/SendNotification';
 import AddNoti from '../page/Settings/AddNoti';
-import DiplomaSafeFinal from '../page/IssueDiploma/demo';
+import DiplomaSafeFinal from '../page/Diploma/demo';
 
 
 import Login from '../page/Login/login';
@@ -36,7 +36,7 @@ function App() {
         {/* Các route cụ thể đặt TRƯỚC */}
         <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
         <Route path="/issue" element={<Layout><IssueDiploma /></Layout>} />
-         <Route path="/copy" element={<Layout><IssueCopy/></Layout>} />
+        <Route path="/copy" element={<Layout><IssueCopy/></Layout>} />
         <Route path="/approval" element={<Layout><Approval/></Layout>} />
         <Route path="/revoke" element={<Layout><IssueAmend/></Layout>} />
         <Route path="/process" element={<Layout><HandleExcel /></Layout>} />

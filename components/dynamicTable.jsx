@@ -120,7 +120,7 @@ const DynamicTable = ({
                   )}
 
                   {/* 3 chấm menu */}
-                  <td className="px-6 py-4 text-right relative">
+                  {/* <td className="px-6 py-4 text-right relative">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
@@ -162,7 +162,7 @@ const DynamicTable = ({
                         )}
                       </div>
                     )}
-                  </td>
+                  </td> */}
 
                 </tr>
               ))}

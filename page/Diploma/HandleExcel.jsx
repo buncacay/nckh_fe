@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { useExcel } from "../../hooks/useExcel";
 import * as utils from "../../components/utils/utils";
 import { ethers } from "ethers";
+import {validate} from "../../services/facultyServices";
 
 const StepItem = ({ step, active, label, icon }) => (
   <div className={`flex items-center gap-3 z-10 ${active ? "opacity-100" : "opacity-40"}`}>
@@ -50,14 +51,35 @@ const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
     setFileName(file.name);
 
     const data = await utils.handleFileUpload(e);
-    if (Array.isArray(data) && data.length > 0) {
+
+    if (!Array.isArray(data) || data.length === 0) {
+      alert("File không hợp lệ hoặc không có dữ liệu.");
+      return;
+    }
+
+    const majors = [...new Set(data.map(x => x.major))];
+
+    try {
+      const response = await validate(majors);
+
+      console.log(response.data);
+      const check = response.data.check;
+      const invalid = response.data.invalidList;
+
+      if (!check) {
+        console.log("Ngành không tồn tại: " + invalid.join(", "));
+        alert("Hãy nhập vào các ngành phù hợp");
+        return;
+      }
+
       handleSetDataList(data);
       setTimeout(() => setCurrentStep(2), 500);
-    } else {
-      alert("File không hợp lệ hoặc không có dữ liệu.");
-    }
-  };
 
+    } catch (error) {
+      console.error(error);
+      alert("Lỗi khi validate ngành.");
+    }
+};
   const connectWallet = async () => {
     if (!window.ethereum) {
       alert("Vui lòng cài đặt MetaMask");
@@ -122,10 +144,8 @@ const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
       const txHash = await utils.startBulkProcess("diploma", formattedList);
 
       if (txHash) {
-        // Chuyển sang màn hình thành công
         setCurrentStep(3);
 
-        // Sau 1.5 giây chuyển sang dashboard
         setTimeout(() => {
           navigate("/dashboard");
         }, 1500);
