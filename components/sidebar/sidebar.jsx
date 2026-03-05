@@ -1,78 +1,106 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  FilePlus, 
-  CheckCircle2, 
-  ShieldAlert, 
-  Copy, 
-  GraduationCap, 
-  Users, 
-  Settings, 
-  Search,
-  LogOut 
-} from 'lucide-react';
+import React from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import {
+  LayoutDashboard,
+  FilePlus,
+  CheckCircle2,
+  ShieldAlert,
+  GraduationCap,
+  Users,
+  Bell,
+  LogOut
+} from "lucide-react";
 
-const menuItems = [
-  { 
-    group: "CHÍNH", 
-    items: [
-      { to: '/dashboard', icon: LayoutDashboard, label: 'Bảng điều khiển' },
-    ]
-  },
-  { 
-    group: "NGHIỆP VỤ", 
-    items: [
-      { to: '/issue', icon: FilePlus, label: 'Cấp văn bằng mới' },
-      { to: '/copy', icon: CheckCircle2, label: 'Cấp phát bản sao' },
-      { to: '/revoke', icon: ShieldAlert, label: 'Cấp phát phụ lục' },
-      
-    ]
-  },
-  { 
-    group: "DANH MỤC", 
-    items: [
-     
-      { to: '/majors', icon: GraduationCap, label: 'Ngành & Khóa học' },
-    ]
-  },
-  { 
-    group: "HỆ THỐNG", 
-    items: [
-      // { to: '/users', icon: Users, label: 'Quản lý nhân sự' },
-      { to: '/sendnoti', icon: Settings, label: 'Quản lý thông báo' },
-      { to: '/manager', icon: Settings, label: 'Quản lý tài khoản' }
-    ]
-  },
-];
+const Sidebar = () => {
+  
+  const navigate = useNavigate();
+  const token = localStorage.getItem("accessToken");
+  const id = localStorage.getItem("id");
+  if (!token) return null;
 
-const Sidebar = ({ isLoggedIn, setIsLoggedIn }) => {
-  if (!isLoggedIn) return null;
+  let role = "";
+
+  try {
+    const decoded = jwtDecode(token);
+    const rawRole =
+      decoded.role ||
+      decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+
+    role = Array.isArray(rawRole) ? rawRole[0] : rawRole;
+    const id  = decoded.sub;
+    console.log(id);
+    console.log(role);
+  } catch {
+    localStorage.clear();
+    return null;
+  }
+
+ const handleLogout = () => {
+  localStorage.clear();
+  navigate("/login", { replace: true });
+};
+
+
+  const adminMenuItems = [
+    {
+      group: "HỆ THỐNG",
+      items: [
+        { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+        { to: "/sendnoti", icon: Bell, label: "Thông báo" }
+      ]
+    },
+    {
+      group: "QUẢN LÝ",
+      items: [
+        { to: "/issue", icon: FilePlus, label: "Cấp văn bằng" },
+        { to: "/copy", icon: CheckCircle2, label: "Cấp bản sao" },
+        { to: "/revoke", icon: ShieldAlert, label: "Phụ lục" }
+      ]
+    },
+    {
+      group: "KHÁC",
+      items: [
+        { to: "/majors", icon: GraduationCap, label: "Ngành học" },
+        { to: "/manager", icon: Users, label: "Quản lý tài khoản" }
+      ]
+    }
+  ];
+
+  const studentMenuItems =(id) => [
+    {
+      group: "CÁ NHÂN",
+      items: [
+        { to: `/infor?id=${id}`, icon: LayoutDashboard, label: "Trang cá nhân" },
+        { to: "/request", icon: GraduationCap, label: "Bổ sung chứng chỉ" }
+      ]
+    }
+  ];
+
+  const menuItems = role === "Admin" 
+    ? adminMenuItems 
+    : studentMenuItems(id); // Truyền userId vào đây để lấy mảng
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 flex flex-col z-20 shadow-sm">
-      {/* 1. Logo Section */}
+    <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-100 flex flex-col z-40 shadow-sm">
+      
       <div className="p-6">
-        <div className="flex flex-col">
-          <h1 className="text-xl font-bold text-blue-600 tracking-tight">VCertificate</h1>
-          <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">Blockchain System</p>
-        </div>
+        <h1 className="text-xl font-bold text-blue-600 tracking-tight">
+          VCertificate
+        </h1>
+        <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
+          Blockchain System
+        </p>
       </div>
 
-      {/* 2. Search Section */}
-      <div className="px-4 mb-4">
-        
-      </div>
-
-      {/* 3. Menu Navigation (Render lồng nhau) */}
       <nav className="flex-1 overflow-y-auto px-3">
         {menuItems.map((group, idx) => (
           <div key={idx} className="mb-6">
-            {/* Tên nhóm */}
+            
             <h3 className="px-4 mb-2 text-[10px] font-bold text-gray-400 uppercase tracking-wider">
               {group.group}
             </h3>
-            
+
             <ul className="space-y-1">
               {group.items.map((item) => (
                 <li key={item.to}>
@@ -80,9 +108,11 @@ const Sidebar = ({ isLoggedIn, setIsLoggedIn }) => {
                     to={item.to}
                     className={({ isActive }) =>
                       `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-all
-                      ${isActive 
-                        ? 'bg-blue-600 text-white shadow-md shadow-blue-200' 
-                        : 'text-gray-500 hover:bg-gray-50 hover:text-blue-600'}`
+                      ${
+                        isActive
+                          ? "bg-blue-600 text-white shadow-md"
+                          : "text-gray-500 hover:bg-gray-50 hover:text-blue-600"
+                      }`
                     }
                   >
                     <item.icon size={18} />
@@ -95,7 +125,15 @@ const Sidebar = ({ isLoggedIn, setIsLoggedIn }) => {
         ))}
       </nav>
 
-     
+      <div className="p-4 border-t">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium text-red-500 hover:bg-red-50 transition"
+        >
+          <LogOut size={18} />
+          Đăng xuất
+        </button>
+      </div>
     </aside>
   );
 };

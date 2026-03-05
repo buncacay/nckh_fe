@@ -11,19 +11,17 @@ const api = axios.create({
 });
 api.interceptors.request.use(config => {
     const fullUrl = `${config.baseURL}${config.url}`;
-    console.log("🚀 Calling API:", fullUrl, "with params:", config.params);
+    console.log(" Calling API:", fullUrl, "with params:", config.params);
     return config;
 });
 
 
-api.interceptors.request.use(
-    (config) =>{
-        const token = localStorage.getItem("token");
-        if (token){
-            config.headers.Authorization= `Bearer ${token}`
-        }
-        return config;
-    }
-)
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem("accessToken");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
 
 export default api;

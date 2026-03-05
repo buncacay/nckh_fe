@@ -4,13 +4,12 @@ import { useExcel } from "../hooks/useExcel";
 import * as facultyService from "../services/facultyServices";
 import { useNavigate } from "react-router-dom";
 
-const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi }) => {
+const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi, processType = "diploma", type="0" }) => {
   const { formData, isSubmitting, handleChange, handleSubmit } =
     useExcel(initialState, onSubmitApi);
 
   
 
-  // State lưu danh sách ngành
   const [faculties, setFaculties] = useState([]);
   const navigate = useNavigate();
   const search='';
@@ -34,7 +33,6 @@ const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi }) =
   return (
     <div className="space-y-6 font-sans text-slate-600 bg-[#f8fafc] min-h-screen pb-10">
       
-      {/* HEADER */}
       <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col md:flex-row items-center justify-between gap-4">
         <div className="flex items-center gap-5">
           <div className="p-3 bg-blue-600 rounded-xl text-white shadow-lg">
@@ -50,17 +48,20 @@ const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi }) =
           </div>
         </div>
 
-        <button
-            type="button"
-            onClick={() => navigate("/process")}
-            className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:border-blue-300 transition-all shadow-sm"
-          >
-            <FileUp size={18} className="text-blue-600" />
-            Nhập Excel
-          </button>
+      <button
+        type="button"
+        onClick={() =>
+          navigate("/process", {
+            state: { processType, type }
+          })
+        }
+        className="flex items-center gap-2 px-5 py-2.5 bg-white border border-slate-200 text-slate-700 text-sm font-bold rounded-xl hover:border-blue-300 transition-all shadow-sm"
+      >
+        <FileUp size={18} className="text-blue-600" />
+        Nhập Excel
+      </button>
       </div>
 
-      {/* FORM */}
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -90,7 +91,6 @@ const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi }) =
                       {field.label}
                     </label>
 
-                    {/* SELECT */}
                     {field.type === "select" ? (
                       <select
                         name={field.name}
@@ -115,7 +115,6 @@ const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi }) =
                             ))}
                       </select>
                     ) : (
-                      /* INPUT */
                       <input
                         type={field.type || "text"}
                         name={field.name}
@@ -132,7 +131,6 @@ const IssueTemplate = ({ title, subTitle, initialState, fields, onSubmitApi }) =
           ))}
         </div>
 
-        {/* RIGHT SIDEBAR */}
         <div className="lg:col-span-1">
           <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm sticky top-6">
             <h3 className="text-blue-900 font-bold uppercase tracking-widest text-[10px] mb-6 flex items-center gap-2">

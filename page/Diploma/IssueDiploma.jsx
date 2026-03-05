@@ -86,7 +86,6 @@ const IssueDiploma = () => {
     }
 
     const finalData = {
-      // 1️⃣ Thứ tự giống mẫu bạn gửi
       serialNumber: formData.serialNumber || "DIP-" + Date.now().toString(),
       holderName: formData.holderName,
       citizenId: formData.citizenId,
@@ -99,7 +98,7 @@ const IssueDiploma = () => {
       graduationYear: Number(formData.graduationYear),
       graduationRank: formData.graduationRank,
 
-      Id: "",   // đúng tên như mẫu bạn đưa
+      Id: "",   
 
       recipientSignatureName: formData.recipientSignatureName,
       notes: formData.notes,
@@ -146,7 +145,8 @@ const IssueDiploma = () => {
         subTitle="Dữ liệu sẽ được ký xác thực bởi ví MetaMask của bạn"
         initialState={initialState}
         fields={fieldsConfig}
-        onSubmitApi={handleDiplomaSubmit} 
+        onSubmitApi={handleDiplomaSubmit}
+        processType="diploma"
       />
     </div>
   );

@@ -12,6 +12,7 @@ import { useExcel } from "../../hooks/useExcel";
 import * as utils from "../../components/utils/utils";
 import { ethers } from "ethers";
 import {validate} from "../../services/facultyServices";
+import { useLocation } from "react-router-dom";
 
 const StepItem = ({ step, active, label, icon }) => (
   <div className={`flex items-center gap-3 z-10 ${active ? "opacity-100" : "opacity-40"}`}>
@@ -35,7 +36,14 @@ const StepItem = ({ step, active, label, icon }) => (
   </div>
 );
 
-const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
+const HandleExcel = ({
+  title = "Xử lý danh sách từ Excel",  
+  onCopySubmit
+                
+}) => {
+  const location = useLocation();
+  const processType = location.state?.processType || "diploma";
+  const type = location.state?.type || "0";
   const [currentStep, setCurrentStep] = useState(1);
   const [account, setAccount] = useState(null);
   const [fileName, setFileName] = useState("");
@@ -50,8 +58,8 @@ const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
 
     setFileName(file.name);
 
-    const data = await utils.handleFileUpload(e);
-
+    const data = await utils.handleFileUpload(e, type);
+    console.log(data);
     if (!Array.isArray(data) || data.length === 0) {
       alert("File không hợp lệ hoặc không có dữ liệu.");
       return;
@@ -104,6 +112,21 @@ const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
         alert("Không có dữ liệu để xử lý");
         return;
       }
+      if (processType === "copy") {
+      if (!onCopySubmit) {
+        alert("Chưa cấu hình API cho copy");
+        return;
+      }
+
+      await onCopySubmit(dataList);
+
+      setCurrentStep(3);
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 1500);
+
+      return;
+    }
 
       let currentAcc = account;
 
@@ -158,7 +181,6 @@ const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
 
   return (
     <div className="space-y-6 bg-[#f8fafc] min-h-screen pb-10 p-6">
-      {/* STEP HEADER */}
       <div className="bg-white p-4 rounded-2xl border shadow-sm max-w-5xl mx-auto">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <StepItem step={1} active={currentStep >= 1} label="Tải lên" icon={<CloudUpload size={18} />} />
@@ -169,7 +191,6 @@ const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
 
       <div className="max-w-5xl mx-auto">
 
-        {/* STEP 1 */}
         {currentStep === 1 && (
           <div className="bg-white p-16 rounded-3xl border-2 border-dashed flex flex-col items-center space-y-6">
             <CloudUpload size={64} className="text-blue-600" />
@@ -192,7 +213,6 @@ const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
           </div>
         )}
 
-        {/* STEP 2 */}
         {currentStep === 2 && (
           <div className="space-y-6">
 
@@ -252,7 +272,6 @@ const HandleExcel = ({ title = "Xử lý danh sách từ Excel" }) => {
           </div>
         )}
 
-        {/* STEP 3 */}
         {currentStep === 3 && (
           <div className="bg-white p-16 rounded-3xl border shadow-xl text-center space-y-6">
             <ShieldCheck size={64} className="text-green-600 mx-auto" />

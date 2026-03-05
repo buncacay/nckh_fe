@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Mail, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import * as auth from "../../services/authServices";
+import {jwtDecode} from "jwt-decode";
 
 export default function LoginPage() {
 
@@ -15,14 +16,35 @@ export default function LoginPage() {
     try {
 
       const loginDto = {
-        email: email,
+        username: email,
         password: password
       };
 
       const kq = await auth.login(loginDto);
       console.log(kq);
       if (kq.data.sucess) {
-        navigate("/dashboard");
+        console.log("ooefdfasdfa");
+        localStorage.setItem("accessToken", kq.data.accessToken);
+        localStorage.setItem("refreshToken", kq.data.refreshToken);
+        const accessToken = kq.data.accessToken;
+          
+        if (!accessToken) return null;
+        const decoded = jwtDecode(accessToken);
+        console.log(decoded);  
+        if (!decoded.exp || Date.now() >= decoded.exp * 1000) {
+          localStorage.clear();
+          return null;
+        }
+    
+        const role =
+          decoded["http://schemas.microsoft.com/ws/2008/06/identity/claims/role"];
+        
+        localStorage.setItem("role", role);
+        
+        if (role=="Admin") navigate("/dashboard");
+        else {
+          navigate("/infor");
+        }
       }
       else {
         alert("Kiểm tra lại mật khẩu và tên đăng nhập");
@@ -37,32 +59,29 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex bg-slate-50">
 
-      {/* LEFT SIDE */}
       <div className="hidden lg:flex w-1/2 items-center justify-center bg-gradient-to-br from-blue-50 to-white">
 
-        <img
-          src="/cube.png"
+       <img
+          src="/images/a.jpg"
           alt="login"
-          className="w-[65%] object-contain drop-shadow-lg"
+          className="w-full h-full object-cover"
         />
 
       </div>
 
 
-      {/* RIGHT SIDE */}
       <div className="flex w-full lg:w-1/2 items-center justify-center px-6">
 
         <div className="
           w-full
           max-w-md
-          bg-white
-          rounded-3xl
-          shadow-xl
-          border border-slate-200
+          
+          
+         
+          
           p-10
         ">
 
-          {/* TITLE */}
           <div className="mb-8 text-center">
 
             <h1 className="text-3xl font-bold text-blue-900">

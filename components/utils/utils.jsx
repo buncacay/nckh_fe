@@ -36,7 +36,7 @@ export function combineSignatures(list) {
   }
 
 
-  export  async function handleFileUpload(e) {
+  export  async function handleFileUpload(e, type) {
     const file = e.target.files[0];
     if (!file) return;
     const formData = new FormData();
@@ -44,7 +44,7 @@ export function combineSignatures(list) {
 
     try {
       console.log("📄 Reading CSV...");
-      const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}Contract/readcsv?type=0`, formData);
+      const { data } = await axios.post(`${import.meta.env.VITE_BASE_URL}Contract/readcsv?type=${type}`, formData);
       console.log(`Loaded ${data.length} diplomas`);
       return data;
     } catch (err) {

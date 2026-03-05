@@ -152,7 +152,8 @@ const Faculty = () => {
           currentPage={page}
           totalPages={totalPages}
           onPageChange={handlePageChange}
-          onRowClickPath={(row) => `/student?id=${row.id}`}
+          onRowClickPath={(row) =>`/infor?id=${row.id}`}
+          // onRowClickPath={(row) =>`/`}
         />
       </div>
     </div>

@@ -5,28 +5,23 @@ import * as copy from "../../services/copyServices";
 
 const IssueCopy = () => {
 
-  // ================= INITIAL STATE =================
   const initialState = {
-    // Thông tin cấp bản sao
     SignerName: "",
     CopyIssueDate: new Date().toISOString().split("T")[0],
     CopyQuantity: 1,
     ReceiverName: "",
 
-    // Thông tin cá nhân
     HolderName: "",
     BirthDate: "",
     CitizenId: "",
 
-    // Dữ liệu sổ gốc
     DiplomaId: "",
-    major: "",              // ✔ đồng bộ với fieldsConfig
+    major: "",              
     GraduationYear: "",
     SerialNumber: "",
     Notes: ""
   };
 
-  // ================= FORM CONFIG =================
   const fieldsConfig = [
     {
       groupTitle: "Thông tin cấp bản sao",
@@ -52,7 +47,8 @@ const IssueCopy = () => {
       icon: <BookOpen size={16} />,
       items: [
         { name: "DiplomaId", label: "ID Văn bằng *", placeholder: "Nhập ID văn bằng" },
-        { name: "major", label: "Ngành đào tạo *", type: "text", placeholder: "Nhập ngành đào tạo" },
+        { name: "graduationRank", label: "Xếp loại", type: "select", options: ["Xuất sắc", "Giỏi", "Khá", "Trung bình"] },
+        { name: "major", label: "Ngành đào tạo *", type: "select", placeholder: "-- Chọn ngành --" },
         { name: "GraduationYear", label: "Năm tốt nghiệp *", type: "number", placeholder: "Ví dụ: 2020" },
         { name: "SerialNumber", label: "Số hiệu văn bằng *", placeholder: "Số hiệu trên bằng gốc" },
         { name: "Notes", label: "Ghi chú *", placeholder: "Ghi chú thêm nếu có" }
@@ -60,7 +56,15 @@ const IssueCopy = () => {
     }
   ];
 
-  // ================= SUBMIT =================
+  const handleMutil = async (data) => {
+    const res = await copy.mutilCopy(data);
+    console.log(res);
+  }
+
+  const formatToUSDate = (dateString) => {
+    const date = new Date(dateString);
+    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  };
   const handleCopySubmit = async (data) => {
     try {
       console.log("DATA TRƯỚC KHI MAP:", data);
@@ -69,15 +73,16 @@ const IssueCopy = () => {
         receiverName: data.ReceiverName,
         count: Number(data.CopyQuantity),
         notes: data.Notes,
-        singerName: data.SignerName,   // ✔ đúng theo API
-        issueAt: new Date(data.CopyIssueDate).toISOString(), // ✔ ISO format
+        singerName: data.SignerName,   
+        issueAt: new Date(data.CopyIssueDate).toISOString(), 
         serialNumber: data.SerialNumber,
         holderName: data.HolderName,
         citizenId: data.CitizenId,
-        birthDate: data.BirthDate,
+        birthDate: formatToUSDate(data.BirthDate),
         major: data.major,
         graduationYear: Number(data.GraduationYear),
-        diplomaId: data.DiplomaId
+        diplomaId: data.DiplomaId,
+        rank: data.graduationRank
       };
 
       console.log("PAYLOAD GỬI LÊN API:", payload);
@@ -91,7 +96,6 @@ const IssueCopy = () => {
     }
   };
 
-  // ================= RENDER =================
   return (
     <IssueTemplate
       title="Sổ cấp bản sao từ sổ gốc"
@@ -99,7 +103,10 @@ const IssueCopy = () => {
       initialState={initialState}
       fields={fieldsConfig}
       onSubmitApi={handleCopySubmit}
-      processPath="/process-copy"
+      onCopySubmit ={handleMutil}
+      processType="copy"
+      type="4"
+
     />
   );
 };
